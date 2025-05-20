@@ -1,5 +1,7 @@
 package com.projetopoo.OrganizadorDeMudancaSwing.model;
 
+import java.util.Objects; // Importar para Objects.equals e Objects.hash
+
 public class ItemMudanca {
     private String nome;
     private String descricao;
@@ -28,5 +30,19 @@ public class ItemMudanca {
     @Override
     public String toString() {
         return "Nome: " + nome + " | Descrição: " + descricao;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemMudanca that = (ItemMudanca) o;
+        return Objects.equals(nome, that.nome) &&
+               Objects.equals(descricao, that.descricao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome, descricao);
     }
 }

@@ -6,8 +6,8 @@ import com.projetopoo.OrganizadorDeMudancaSwing.util.QRCodeUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+// Removido: java.awt.event.ActionEvent; (não é mais necessário importar especificamente se usamos lambdas)
+// Removido: java.awt.event.ActionListener; (não é mais necessário importar especificamente se usamos lambdas)
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,42 +25,88 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() {
         setTitle("Organizador de Mudança 📦");
-        setSize(700, 500);
+        setSize(800, 600); // Aumentei um pouco o tamanho para os novos botões
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10)); // Adicionado espaçamento entre componentes do BorderLayout
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margem na janela
 
-        // Painel esquerdo: caixas
-        JPanel painelCaixas = new JPanel(new BorderLayout());
+        // === Painel Esquerdo: Caixas ===
+        JPanel painelCaixas = new JPanel(new BorderLayout(5, 5));
         painelCaixas.setBorder(BorderFactory.createTitledBorder("Caixas"));
         painelCaixas.add(new JScrollPane(listaCaixas), BorderLayout.CENTER);
 
+        JPanel painelBotoesCaixas = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Usar FlowLayout para botões lado a lado
         JButton btnNovaCaixa = new JButton("Nova Caixa");
-        painelCaixas.add(btnNovaCaixa, BorderLayout.SOUTH);
+        JButton btnRemoverCaixa = new JButton("Remover Caixa");
+        painelBotoesCaixas.add(btnNovaCaixa);
+        painelBotoesCaixas.add(btnRemoverCaixa);
+        painelCaixas.add(painelBotoesCaixas, BorderLayout.SOUTH);
 
-        // Painel direito: itens da caixa selecionada
-        JPanel painelItens = new JPanel(new BorderLayout());
+        // === Painel Direito: Itens da Caixa Selecionada ===
+        JPanel painelItens = new JPanel(new BorderLayout(5, 5));
         painelItens.setBorder(BorderFactory.createTitledBorder("Itens da Caixa"));
         painelItens.add(new JScrollPane(listaItens), BorderLayout.CENTER);
 
-        JPanel painelBotoesItens = new JPanel();
+        JPanel painelBotoesItens = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton btnNovoItem = new JButton("Novo Item");
+        JButton btnRemoverItem = new JButton("Remover Item"); // Botão novo
         JButton btnGerarQRCode = new JButton("Gerar QR Code");
         painelBotoesItens.add(btnNovoItem);
+        painelBotoesItens.add(btnRemoverItem); // Adicionado
         painelBotoesItens.add(btnGerarQRCode);
-
         painelItens.add(painelBotoesItens, BorderLayout.SOUTH);
 
-        add(painelCaixas, BorderLayout.WEST);
-        add(painelItens, BorderLayout.CENTER);
+        // Usando JSplitPane para permitir redimensionamento
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, painelCaixas, painelItens);
+        splitPane.setDividerLocation(300); // Posição inicial do divisor
+        add(splitPane, BorderLayout.CENTER);
+
+
+        // --- Ações dos Botões ---
 
         // Ação para criar nova caixa
         btnNovaCaixa.addActionListener(e -> {
-            String nome = JOptionPane.showInputDialog(this, "Nome da caixa:");
+            String nome = JOptionPane.showInputDialog(this, "Nome da caixa:", "Nova Caixa", JOptionPane.PLAIN_MESSAGE);
             if (nome != null && !nome.isBlank()) {
-                String id = UUID.randomUUID().toString();
-                Caixa caixa = new Caixa(id, nome);
-                caixas.add(caixa);
-                modeloListaCaixas.addElement(caixa.getNome());
+                // Validação simples para nome duplicado (pode ser melhorada)
+                boolean nomeExistente = false;
+                for (Caixa c : caixas) {
+                    if (c.getNome().equalsIgnoreCase(nome.trim())) {
+                        nomeExistente = true;
+                        break;
+                    }
+                }
+                if (nomeExistente) {
+                    JOptionPane.showMessageDialog(this, "Já existe uma caixa com este nome.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String id = UUID.randomUUID().toString();
+                    Caixa caixa = new Caixa(id, nome.trim());
+                    caixas.add(caixa);
+                    modeloListaCaixas.addElement(caixa.getNome());
+                    listaCaixas.setSelectedIndex(modeloListaCaixas.getSize() - 1); // Seleciona a nova caixa
+                }
+            }
+        });
+
+        // Ação para remover caixa selecionada
+        btnRemoverCaixa.addActionListener(e -> {
+            int indexSelecionado = listaCaixas.getSelectedIndex();
+            if (indexSelecionado >= 0) {
+                String nomeCaixa = modeloListaCaixas.getElementAt(indexSelecionado);
+                int confirmacao = JOptionPane.showConfirmDialog(this,
+                        "Tem certeza que deseja remover a caixa \"" + nomeCaixa + "\" e todos os seus itens?",
+                        "Confirmar Remoção", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                if (confirmacao == JOptionPane.YES_OPTION) {
+                    caixas.remove(indexSelecionado);
+                    modeloListaCaixas.remove(indexSelecionado);
+                    modeloListaItens.clear(); // Limpa a lista de itens, pois a caixa foi removida
+                    if (modeloListaCaixas.getSize() > 0) { // Se ainda houver caixas
+                        listaCaixas.setSelectedIndex(Math.max(0, indexSelecionado -1)); // Tenta selecionar a anterior ou a primeira
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Selecione uma caixa para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -73,17 +119,61 @@ public class TelaPrincipal extends JFrame {
 
         // Ação para adicionar item na caixa selecionada
         btnNovoItem.addActionListener(e -> {
-            int index = listaCaixas.getSelectedIndex();
-            if (index >= 0) {
-                String nome = JOptionPane.showInputDialog(this, "Nome do item:");
-                String descricao = JOptionPane.showInputDialog(this, "Descrição do item:");
-                if (nome != null && !nome.isBlank() && descricao != null && !descricao.isBlank()) {
-                    ItemMudanca item = new ItemMudanca(nome, descricao);
-                    caixas.get(index).adicionarItem(item);
-                    atualizarListaItens();
+            int indexCaixaSelecionada = listaCaixas.getSelectedIndex();
+            if (indexCaixaSelecionada >= 0) {
+                JTextField campoNomeItem = new JTextField();
+                JTextField campoDescricaoItem = new JTextField();
+                Object[] campos = {
+                        "Nome do item:", campoNomeItem,
+                        "Descrição do item:", campoDescricaoItem
+                };
+                int option = JOptionPane.showConfirmDialog(this, campos, "Novo Item", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                if (option == JOptionPane.OK_OPTION) {
+                    String nome = campoNomeItem.getText();
+                    String descricao = campoDescricaoItem.getText();
+
+                    if (nome != null && !nome.isBlank()) {
+                        ItemMudanca item = new ItemMudanca(nome.trim(), (descricao != null ? descricao.trim() : ""));
+                        caixas.get(indexCaixaSelecionada).adicionarItem(item);
+                        atualizarListaItens();
+                        listaItens.setSelectedIndex(modeloListaItens.getSize() -1); // Seleciona o novo item
+                    } else {
+                         JOptionPane.showMessageDialog(this, "O nome do item não pode ser vazio.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Selecione uma caixa primeiro.");
+                JOptionPane.showMessageDialog(this, "Selecione uma caixa primeiro para adicionar um item.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        // Ação para remover item selecionado
+        btnRemoverItem.addActionListener(e -> {
+            int indexCaixaSelecionada = listaCaixas.getSelectedIndex();
+            int indexItemSelecionado = listaItens.getSelectedIndex();
+
+            if (indexCaixaSelecionada < 0) {
+                JOptionPane.showMessageDialog(this, "Selecione uma caixa primeiro.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            if (indexItemSelecionado < 0) {
+                JOptionPane.showMessageDialog(this, "Selecione um item para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            Caixa caixaSelecionada = caixas.get(indexCaixaSelecionada);
+            // Como a lista de itens mostra "nome - descrição", precisamos pegar o objeto ItemMudanca pela posição
+            String nomeItem = modeloListaItens.getElementAt(indexItemSelecionado);
+
+            int confirmacao = JOptionPane.showConfirmDialog(this,
+                    "Tem certeza que deseja remover o item \"" + nomeItem + "\"?",
+                    "Confirmar Remoção", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (confirmacao == JOptionPane.YES_OPTION) {
+                caixaSelecionada.getItens().remove(indexItemSelecionado); // Remove pelo índice
+                atualizarListaItens();
+                 if (modeloListaItens.getSize() > 0) { // Se ainda houver itens
+                    listaItens.setSelectedIndex(Math.max(0, indexItemSelecionado -1)); // Tenta selecionar o anterior ou o primeiro
+                }
             }
         });
 
@@ -92,38 +182,39 @@ public class TelaPrincipal extends JFrame {
             int index = listaCaixas.getSelectedIndex();
             if (index >= 0) {
                 Caixa caixaSelecionada = caixas.get(index);
-                String textoQR = "Caixa: " + caixaSelecionada.getNome() + "\n\n" + caixaSelecionada.gerarDescricaoItens();
+                String textoQR = "Caixa: " + caixaSelecionada.getNome() + "\n\nItens:\n" + caixaSelecionada.gerarDescricaoItens();
 
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Salvar QR Code");
-                fileChooser.setSelectedFile(new File("QRCode_" + caixaSelecionada.getNome() + ".png"));
+                fileChooser.setSelectedFile(new File("QRCode_" + caixaSelecionada.getNome().replaceAll("[^a-zA-Z0-9.-]", "_") + ".png")); // Nome de arquivo mais seguro
                 int userSelection = fileChooser.showSaveDialog(this);
 
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File arquivo = fileChooser.getSelectedFile();
                     try {
                         QRCodeUtil.gerarQRCode(textoQR, arquivo.getAbsolutePath());
-                        JOptionPane.showMessageDialog(this, "QR Code salvo com sucesso!");
+                        JOptionPane.showMessageDialog(this, "QR Code salvo com sucesso em:\n" + arquivo.getAbsolutePath(), "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        JOptionPane.showMessageDialog(this, "Erro ao gerar QR Code.");
+                        JOptionPane.showMessageDialog(this, "Erro ao gerar QR Code: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-
             } else {
-                JOptionPane.showMessageDialog(this, "Selecione uma caixa primeiro.");
+                JOptionPane.showMessageDialog(this, "Selecione uma caixa primeiro para gerar o QR Code.", "Aviso", JOptionPane.WARNING_MESSAGE);
             }
         });
+
+        setLocationRelativeTo(null); // Centralizar a janela
     }
 
     // Atualiza a lista de itens com base na caixa selecionada
     private void atualizarListaItens() {
         modeloListaItens.clear();
-        int index = listaCaixas.getSelectedIndex();
-        if (index >= 0) {
-            Caixa caixaSelecionada = caixas.get(index);
+        int indexCaixaSelecionada = listaCaixas.getSelectedIndex();
+        if (indexCaixaSelecionada >= 0) {
+            Caixa caixaSelecionada = caixas.get(indexCaixaSelecionada);
             for (ItemMudanca item : caixaSelecionada.getItens()) {
-                modeloListaItens.addElement(item.getNome() + " - " + item.getDescricao());
+                modeloListaItens.addElement(item.getNome() + (item.getDescricao().isEmpty() ? "" : " - " + item.getDescricao()));
             }
         }
     }
