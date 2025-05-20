@@ -37,7 +37,7 @@ public class Caixa {
     public void removerItem(ItemMudanca item) {
         itens.remove(item);
     }
-
+    // Gerar descrição dos itens
     public String gerarDescricaoItens() {
         StringBuilder descricao = new StringBuilder();
         for (ItemMudanca item : itens) {

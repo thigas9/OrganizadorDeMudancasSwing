@@ -1,6 +1,6 @@
 package com.projetopoo.OrganizadorDeMudancaSwing.model;
 
-import java.util.Objects; // Importar para Objects.equals e Objects.hash
+import java.util.Objects;
 
 public class ItemMudanca {
     private String nome;

@@ -62,7 +62,7 @@ public class TelaPrincipal extends JFrame {
         add(splitPane, BorderLayout.CENTER);
 
 
-        // --- Ações dos Botões ---
+        // -- Ações dos Botões --
 
         // Ação para criar nova caixa
         btnNovaCaixa.addActionListener(e -> {
