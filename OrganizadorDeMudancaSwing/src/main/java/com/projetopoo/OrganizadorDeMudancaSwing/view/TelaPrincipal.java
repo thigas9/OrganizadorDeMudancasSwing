@@ -25,7 +25,7 @@ public class TelaPrincipal extends JFrame {
 
     public TelaPrincipal() {
         setTitle("Organizador de Mudança 📦");
-        setSize(800, 600); // Aumentei um pouco o tamanho para os novos botões
+        setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10)); // Adicionado espaçamento entre componentes do BorderLayout
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margem na janela
