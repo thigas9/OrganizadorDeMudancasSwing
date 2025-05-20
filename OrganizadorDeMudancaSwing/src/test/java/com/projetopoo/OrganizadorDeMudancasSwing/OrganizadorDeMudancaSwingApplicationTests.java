@@ -1,4 +1,4 @@
-package com.projetopoo.OrganizadorDeMudancaSwing;
+package com.projetopoo.OrganizadorDeMudancasSwing;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

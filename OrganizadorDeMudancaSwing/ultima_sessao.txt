@@ -1,0 +1,8 @@
+Caixa: Caixa da cozinha
+Itens:
+- Facas | Descrição: Kit
+-----------------
+Caixa: Caixa do quarto
+Itens:
+- Sapato | Descrição: Social
+- Chinelo | Descrição: de praia

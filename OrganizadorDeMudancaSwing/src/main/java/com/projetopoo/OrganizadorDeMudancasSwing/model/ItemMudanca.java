@@ -32,6 +32,7 @@ public class ItemMudanca {
         return "Nome: " + nome + " | Descrição: " + descricao;
     }
 
+    // Equals e has
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

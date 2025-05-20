@@ -17,7 +17,7 @@ public class QRCodeUtil {
         int altura = 300;
         String formato = "UTF-8";
         
-        // Seta o formato UTF-8
+        // Seta o formato UTF-8 //
         Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
         hints.put(EncodeHintType.CHARACTER_SET, formato);
 
