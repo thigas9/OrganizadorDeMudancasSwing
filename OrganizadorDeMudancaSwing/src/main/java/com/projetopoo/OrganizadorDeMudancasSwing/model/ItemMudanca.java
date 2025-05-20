@@ -1,4 +1,4 @@
-package com.projetopoo.OrganizadorDeMudancaSwing.model;
+package com.projetopoo.OrganizadorDeMudancasSwing.model;
 
 import java.util.Objects;
 

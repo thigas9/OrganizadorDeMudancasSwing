@@ -1,10 +1,11 @@
-package com.projetopoo.OrganizadorDeMudancaSwing.view;
-
-import com.projetopoo.OrganizadorDeMudancaSwing.model.Caixa;
-import com.projetopoo.OrganizadorDeMudancaSwing.model.ItemMudanca;
-import com.projetopoo.OrganizadorDeMudancaSwing.util.QRCodeUtil;
+package com.projetopoo.OrganizadorDeMudancasSwing.view;
 
 import javax.swing.*;
+
+import com.projetopoo.OrganizadorDeMudancasSwing.model.Caixa;
+import com.projetopoo.OrganizadorDeMudancasSwing.model.ItemMudanca;
+import com.projetopoo.OrganizadorDeMudancasSwing.util.QRCodeUtil;
+
 import java.awt.*;
 // Removido: java.awt.event.ActionEvent; (não é mais necessário importar especificamente se usamos lambdas)
 // Removido: java.awt.event.ActionListener; (não é mais necessário importar especificamente se usamos lambdas)
@@ -30,7 +31,7 @@ public class TelaPrincipal extends JFrame {
         setLayout(new BorderLayout(10, 10)); // Adicionado espaçamento entre componentes do BorderLayout
         getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margem na janela
 
-        // === Painel Esquerdo: Caixas ===
+        // ==== Painel Esquerdo: Caixas ====
         JPanel painelCaixas = new JPanel(new BorderLayout(5, 5));
         painelCaixas.setBorder(BorderFactory.createTitledBorder("Caixas"));
         painelCaixas.add(new JScrollPane(listaCaixas), BorderLayout.CENTER);

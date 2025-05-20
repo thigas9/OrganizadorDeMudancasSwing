@@ -1,4 +1,4 @@
-package com.projetopoo.OrganizadorDeMudancaSwing.util;
+package com.projetopoo.OrganizadorDeMudancasSwing.util;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
