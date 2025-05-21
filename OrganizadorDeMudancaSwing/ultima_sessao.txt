@@ -1,8 +1,26 @@
-Caixa: Caixa da cozinha
+TipoCaixa: Fragil
+Caixa: Pratos
+Categoria: Cozinha
+Status: A_EMBALAR
+InstrucoesCuidado: Vidro
 Itens:
-- Facas | Descrição: Kit
+- Kit de pratos | Descrição: Azuis
+- Kit de pratos | Descrição: Vermelhos
 -----------------
-Caixa: Caixa do quarto
+TipoCaixa: Comum
+Caixa: Brinquedos
+Categoria: Geral
+Status: A_EMBALAR
 Itens:
-- Sapato | Descrição: Social
-- Chinelo | Descrição: de praia
+- Meu Bita | Descrição: Pequenininho
+- Bola de futebol | Descrição: Bola amarela
+-----------------
+TipoCaixa: Comum
+Caixa: Calçados
+Categoria: Quarto
+Status: A_EMBALAR
+Itens:
+- Sapato Social | Descrição: Preto
+- Sapato Social | Descrição: Marrom
+- Tenis de Corrida | Descrição: Amarelo
+- Tenis social | Descrição: Preto
